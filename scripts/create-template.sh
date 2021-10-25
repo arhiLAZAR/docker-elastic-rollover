@@ -1,7 +1,7 @@
 #!/bin/bash
 
 policy_name="${ER_POLICY_NAME:-default_rollover}"
-template_name="${ER_TEMPLATE_NAME:-general_template}"
+template_name="${ER_TEMPLATE_NAME:-all_indices}"
 url="${ER_ELASTIC_URL:-localhost:9200}"
 shards="${ER_NUMBER_OF_SHARDS:-1}"
 priority="${ER_TEMPLATE_PRIORITY:-999}"
