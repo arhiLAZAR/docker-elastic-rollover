@@ -15,6 +15,12 @@ if [[ "${ER_ELASTIC_LOGIN}" != "" && "${ER_ELASTIC_PASS}" != "" ]]; then
   login_flag="--user ${ER_ELASTIC_LOGIN}:${ER_ELASTIC_PASS}"
 fi
 
+echo "Create a new ILM Policy \"${policy_name}\""
+echo "Max age: ${max_age}"
+echo "Max size: ${max_size}"
+echo "Max docs count: ${max_docs}"
+echo "Delete after: ${delete_after}"
+
 curl  -XPUT \
       -H 'Content-Type: application/json' \
       ${insecure_flag} \

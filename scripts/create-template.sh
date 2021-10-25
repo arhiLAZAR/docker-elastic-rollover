@@ -21,6 +21,11 @@ done
 
 index_patterns=$(sed 's/, $//' <<< $index_patterns)
 
+echo "Create a new Index Template \"${template_name}\""
+echo "Priority: ${priority}"
+echo "Shards count: ${shards}"
+echo "Description: ${description}"
+
 curl  -XPUT \
       -H 'Content-Type: application/json' \
       ${insecure_flag} \
