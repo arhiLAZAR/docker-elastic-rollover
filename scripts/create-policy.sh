@@ -22,11 +22,12 @@ echo "Max docs count: ${max_docs}"
 echo "Delete after: ${delete_after}"
 
 curl  -XPUT \
-      -H 'Content-Type: application/json' \
+      --silent \
+      --header 'Content-Type: application/json' \
       ${insecure_flag} \
       ${login_flag} \
       "${url}/_ilm/policy/${policy_name}?pretty" \
-      -d"
+      --data "
 {
   \"policy\": {
     \"phases\": {

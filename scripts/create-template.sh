@@ -27,11 +27,12 @@ echo "Shards count: ${shards}"
 echo "Description: ${description}"
 
 curl  -XPUT \
-      -H 'Content-Type: application/json' \
+      --silent \
+      --header 'Content-Type: application/json' \
       ${insecure_flag} \
       ${login_flag} \
       "${url}/_index_template/${template_name}?pretty" \
-      -d"
+      --data "
 {
   \"index_patterns\": [ ${index_patterns} ],
   \"data_stream\": { },
