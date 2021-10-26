@@ -2,10 +2,13 @@
 
 policy_name="${ER_POLICY_NAME:-default_rollover}"
 template_name="${ER_TEMPLATE_NAME:-all_indices}"
+metricbeat_template_name="${ER_METRICBEAT_TEMPLATE_NAME:-metricbeat}"
 url="${ER_ELASTIC_URL:-localhost:9200}"
 shards="${ER_NUMBER_OF_SHARDS:-1}"
 priority="${ER_TEMPLATE_PRIORITY:-999}"
 description="${ER_TEMPLATE_DESCRIPTION:-The template for the default index rotation}"
+metricbeat_description="${ER_METRICBEAT_TEMPLATE_DESCRIPTION:-The template for metricbeat indices}"
+metricbeat_index_pattern="${ER_METRICBEAT_INDEX_PATTERN:-metricbeat-*}"
 
 if [[ "${ER_INSECURE_HTTPS}" == "true" ]]; then
   insecure_flag="--insecure"
@@ -53,3 +56,37 @@ curl  -XPUT \
   }
 }
 "
+
+if [[ "${ER_CREATE_METRICBEAT_TEMPLATE}" == "true" ]]; then
+  echo "Create a new Index Template \"${metricbeat_template_name}\""
+  echo "Priority: $(( ${priority} + 1 ))"
+  echo "Shards count: ${shards}"
+  echo "Description: ${metricbeat_description}"
+
+  curl  -XPUT \
+        --silent \
+        --header 'Content-Type: application/json' \
+        ${insecure_flag} \
+        ${login_flag} \
+        "${url}/_index_template/${metricbeat_template_name}?pretty" \
+        --data "
+  {
+    \"index_patterns\": [ \"${metricbeat_index_pattern}\" ],
+    \"template\": {
+      \"settings\": {
+        \"number_of_shards\": ${shards},
+        \"index\": {
+          \"lifecycle\": {
+            \"name\": \"${policy_name}\"
+          }
+        }
+      },
+      \"mappings\": { }
+    },
+    \"priority\": $(( ${priority} + 1 )),
+    \"_meta\": {
+      \"description\": \"${metricbeat_description}\"
+    }
+  }
+  "
+fi
