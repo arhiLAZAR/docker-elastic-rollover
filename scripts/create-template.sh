@@ -8,7 +8,8 @@ shards="${ER_NUMBER_OF_SHARDS:-1}"
 priority="${ER_TEMPLATE_PRIORITY:-999}"
 description="${ER_TEMPLATE_DESCRIPTION:-The template for the default index rotation}"
 metricbeat_description="${ER_METRICBEAT_TEMPLATE_DESCRIPTION:-The template for metricbeat indices}"
-metricbeat_index_pattern="${ER_METRICBEAT_INDEX_PATTERN:-metricbeat-*}"
+metricbeat_index_pattern="${ER_METRICBEAT_INDEX_PATTERN:-metricbeat*}"
+metricbeat_alias="${ER_METRICBEAT_ALIAS:-metricbeat}"
 
 if [[ "${ER_INSECURE_HTTPS}" == "true" ]]; then
   insecure_flag="--insecure"
@@ -77,7 +78,8 @@ if [[ "${ER_CREATE_METRICBEAT_TEMPLATE}" == "true" ]]; then
         \"number_of_shards\": ${shards},
         \"index\": {
           \"lifecycle\": {
-            \"name\": \"${policy_name}\"
+            \"name\": \"${policy_name}\",
+            \"rollover_alias\": \"${metricbeat_alias}\"
           }
         }
       },
