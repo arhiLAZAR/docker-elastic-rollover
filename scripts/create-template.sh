@@ -5,6 +5,7 @@ template_name="${ER_TEMPLATE_NAME:-all_indices}"
 metricbeat_template_name="${ER_METRICBEAT_TEMPLATE_NAME:-metricbeat}"
 url="${ER_ELASTIC_URL:-localhost:9200}"
 shards="${ER_NUMBER_OF_SHARDS:-1}"
+replicas="${ER_NUMBER_OF_REPLICAS:-1}"
 priority="${ER_TEMPLATE_PRIORITY:-999}"
 description="${ER_TEMPLATE_DESCRIPTION:-The template for the default index rotation}"
 metricbeat_description="${ER_METRICBEAT_TEMPLATE_DESCRIPTION:-The template for metricbeat indices}"
@@ -28,6 +29,7 @@ index_patterns=$(sed 's/, $//' <<< $index_patterns)
 echo "Create a new Index Template \"${template_name}\""
 echo "Priority: ${priority}"
 echo "Shards count: ${shards}"
+echo "Replicas count: ${replicas}"
 echo "Description: ${description}"
 
 curl  -XPUT \
@@ -43,6 +45,7 @@ curl  -XPUT \
   \"template\": {
     \"settings\": {
       \"number_of_shards\": ${shards},
+      \"number_of_replicas\": ${replicas},
       \"index\": {
         \"lifecycle\": {
           \"name\": \"${policy_name}\"
@@ -62,6 +65,7 @@ if [[ "${ER_CREATE_METRICBEAT_TEMPLATE}" == "true" ]]; then
   echo "Create a new Index Template \"${metricbeat_template_name}\""
   echo "Priority: $(( ${priority} + 1 ))"
   echo "Shards count: ${shards}"
+  echo "Replicas count: ${replicas}"
   echo "Description: ${metricbeat_description}"
 
   curl  -XPUT \
@@ -76,6 +80,7 @@ if [[ "${ER_CREATE_METRICBEAT_TEMPLATE}" == "true" ]]; then
     \"template\": {
       \"settings\": {
         \"number_of_shards\": ${shards},
+        \"number_of_replicas\": ${replicas},
         \"index\": {
           \"lifecycle\": {
             \"name\": \"${policy_name}\",
