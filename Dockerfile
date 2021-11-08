@@ -7,6 +7,7 @@ COPY scripts/wait-for-elastic.sh /usr/local/bin/wait-for-elastic
 RUN apt-get -y update && \
 apt-get install -y --no-install-recommends \
 curl \
+jq \
 ca-certificates && \
 apt-get clean && \
 rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
