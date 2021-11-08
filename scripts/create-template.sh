@@ -11,6 +11,7 @@ description="${ER_TEMPLATE_DESCRIPTION:-The template for the default index rotat
 metricbeat_description="${ER_METRICBEAT_TEMPLATE_DESCRIPTION:-The template for metricbeat indices}"
 metricbeat_index_pattern="${ER_METRICBEAT_INDEX_PATTERN:-metricbeat*}"
 metricbeat_alias="${ER_METRICBEAT_ALIAS:-metricbeat}"
+overwrite_templates="${ER_OVERWRITE_TEMPLATES:-false}"
 
 if [[ "${ER_INSECURE_HTTPS}" == "true" ]]; then
   insecure_flag="--insecure"
@@ -18,6 +19,10 @@ fi
 
 if [[ "${ER_ELASTIC_LOGIN}" != "" && "${ER_ELASTIC_PASS}" != "" ]]; then
   login_flag="--user ${ER_ELASTIC_LOGIN}:${ER_ELASTIC_PASS}"
+fi
+
+if [[ "${overwrite_templates}" != "true" ]]; then
+  overwrite_flag='&create=true'
 fi
 
 for char in {a..z} {0..9} '-'; do
@@ -37,7 +42,7 @@ curl  -XPUT \
       --header 'Content-Type: application/json' \
       ${insecure_flag} \
       ${login_flag} \
-      "${url}/_index_template/${template_name}?pretty" \
+      "${url}/_index_template/${template_name}?pretty${overwrite_flag}" \
       --data "
 {
   \"index_patterns\": [ ${index_patterns} ],
@@ -73,7 +78,7 @@ if [[ "${ER_CREATE_METRICBEAT_TEMPLATE}" == "true" ]]; then
         --header 'Content-Type: application/json' \
         ${insecure_flag} \
         ${login_flag} \
-        "${url}/_index_template/${metricbeat_template_name}?pretty" \
+        "${url}/_index_template/${metricbeat_template_name}?pretty${overwrite_flag}" \
         --data "
   {
     \"index_patterns\": [ \"${metricbeat_index_pattern}\" ],
